@@ -10,8 +10,9 @@ from models import *
 def connect_to_database(DSN):
     engine = sqlalchemy.create_engine(DSN)
     Session = sessionmaker(bind=engine)
+    session = Session()
 
-    return Session()
+    return session, engine
 
 
 def get_publisher(session, publisher_input):
@@ -26,12 +27,13 @@ def get_publisher(session, publisher_input):
         return None
 
 
-def get_sales_info(session, obj_publisher):
+def get_sales_info(session, publisher_id_or_name):
+    publisher = get_publisher(session, publisher_id_or_name)
     query = session.query(Book.title, Shop.name, Sale.price, Sale.date_sale). \
         join(Stock, Stock.book_id == Book.id). \
         join(Shop, Shop.id == Stock.shop_id). \
         join(Sale, Sale.stock_id == Stock.id). \
-        filter(Book.publisher_id == obj_publisher.id)
+        filter(Book.publisher_id == publisher.id)
 
     results = query.all()
 

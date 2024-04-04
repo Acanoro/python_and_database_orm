@@ -16,7 +16,7 @@ def main():
     DSN = f"postgresql://{user}:{password}@{host}:{port}/{name}"
 
     try:
-        session = connect_to_database(DSN)
+        session, engine = connect_to_database(DSN)
 
         # создание таблиц
         # create_tables(engine)
@@ -27,11 +27,8 @@ def main():
         publisher_input = input()
 
         obj_publisher = get_publisher(session=session, publisher_input=publisher_input)
-        if obj_publisher:
-            get_sales_info(session=session, obj_publisher=obj_publisher)
-        else:
-            print("Издатель не найден")
 
+        get_sales_info(session=session, publisher_id_or_name=publisher_input)
     except Exception as e:
         print(f"Произошла ошибка: {e}")
 
